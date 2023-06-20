@@ -64,22 +64,17 @@
       <!-- Left Column -->
       <div class="col-md-3">
         <!-- Expandable Checkbox Filters -->
+        <!-- Bootstrap card -->
         <div class="card mb-4">
-          <div class="card-header">
-            <button
-              class="btn btn-link"
-              data-toggle="collapse"
-              data-target="#filterCollapse"
-              aria-expanded="true"
-              aria-controls="filterCollapse"
-            >
-              Sort By
-            </button>
+          <!-- Card header with toggle button -->
+          <div class="card-header" @click="toggleCardSortBy">
+            <h5 class="mb-0">Sort By</h5>
           </div>
-          <div id="filterCollapse" class="collapse show">
-            <div class="card-body">
-              <!-- Placeholder for checkbox filters -->
-              <div class="form-group">
+
+          <!-- Card body (content) with Vue conditional rendering -->
+          <div class="card-body" v-if="isExpandedSortBy">
+            <!-- Placeholder for checkbox filters -->
+            <div class="form-group">
                 <label class="checkbox">
                   <input type="checkbox" /> Filter 1
                 </label>
@@ -94,26 +89,20 @@
                   <input type="checkbox" /> Filter 3
                 </label>
               </div>
-            </div>
           </div>
         </div>
 
+        <!-- Bootstrap card -->
         <div class="card mb-4">
-          <div class="card-header">
-            <button
-              class="btn btn-link"
-              data-toggle="collapse"
-              data-target="#filterCollapse"
-              aria-expanded="true"
-              aria-controls="filterCollapse"
-            >
-              Pricing
-            </button>
+          <!-- Card header with toggle button -->
+          <div class="card-header" @click="toggleCardPricing">
+            <h5 class="mb-0">Pricing</h5>
           </div>
-          <div id="filterCollapse" class="collapse show">
-            <div class="card-body">
-              <!-- Placeholder for checkbox filters -->
-              <div class="form-group">
+
+          <!-- Card body (content) with Vue conditional rendering -->
+          <div class="card-body" v-if="isExpandedPricing">
+            <!-- Placeholder for checkbox filters -->
+            <div class="form-group">
                 <label class="checkbox">
                   <input type="checkbox" /> Filter 1
                 </label>
@@ -128,26 +117,20 @@
                   <input type="checkbox" /> Filter 3
                 </label>
               </div>
-            </div>
           </div>
         </div>
 
+        <!-- Bootstrap card -->
         <div class="card mb-4">
-          <div class="card-header">
-            <button
-              class="btn btn-link"
-              data-toggle="collapse"
-              data-target="#filterCollapse"
-              aria-expanded="true"
-              aria-controls="filterCollapse"
-            >
-              Categories
-            </button>
+          <!-- Card header with toggle button -->
+          <div class="card-header" @click="toggleCardCategory">
+            <h5 class="mb-0">Categories</h5>
           </div>
-          <div id="filterCollapse" class="collapse show">
-            <div class="card-body">
-              <!-- Placeholder for checkbox filters -->
-              <div class="form-group">
+
+          <!-- Card body (content) with Vue conditional rendering -->
+          <div class="card-body" v-if="isExpandedCategory">
+            <!-- Placeholder for checkbox filters -->
+            <div class="form-group">
                 <label class="checkbox">
                   <input type="checkbox" /> Filter 1
                 </label>
@@ -162,7 +145,6 @@
                   <input type="checkbox" /> Filter 3
                 </label>
               </div>
-            </div>
           </div>
         </div>
       </div>
@@ -176,6 +158,8 @@
               <div class="card-body">
                 <h5 class="card-title">{{ item.tool_name }}</h5>
                 <p class="card-text">{{ item.tool_description }}</p>
+
+                <button class="btn btn-secondary" @click="redirectTo(item.tool_url)">Go to {{ item.tool_name }} webpage</button>
               </div>
             </div>
           </div>
@@ -217,12 +201,27 @@ export default {
       ],
       currentPage: 1,
       totalPages: 10,
+      isExpandedSortBy: false,
+      isExpandedPricing: false,
+      isExpandedCategory: false,
     };
   },
   methods: {
     handlePageChange(page) {
       this.currentPage = page;
       // Perform any necessary data fetching or updates based on the new page
+    },
+    redirectTo(url) {
+      window.open(url, "_blank");
+    },
+    toggleCardSortBy() {
+      this.isExpandedSortBy = !this.isExpandedSortBy;
+    },
+    toggleCardPricing() {
+      this.isExpandedPricing = !this.isExpandedPricing;
+    },
+    toggleCardCategory() {
+      this.isExpandedCategory = !this.isExpandedCategory;
     },
   },
   mounted() {
