@@ -10,10 +10,10 @@
 
           <!-- Search Bar -->
           <form>
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Search" />
+            <div class="input-group mb-3 header-search-bar">
+              <input type="text" class="form-control" v-model="searchKeyword" placeholder="" @keyup.enter="filterData" />
               <div class="input-group-append">
-                <button class="btn btn-primary" type="button">Search</button>
+                <button class="btn btn-light" type="button" @click="filterData">Search</button>
               </div>
             </div>
           </form>
@@ -29,13 +29,14 @@
       <div class="col-md-4">
         <!-- Featured Card -->
         <h6>Featured Tool</h6>
-        <div class="card">
+        <!-- <div class="card">
           <img class="card-img-top" alt="Featured Image" />
           <div class="card-body">
             <h5 class="card-title">Featured Card Title</h5>
             <p class="card-text">Featured Card Description</p>
           </div>
-        </div>
+        </div> -->
+        <featured-tool></featured-tool>
       </div>
 
       <!-- Right Column -->
@@ -43,14 +44,7 @@
         <div class="row">
           <!-- Left Column Cards -->
           <h6>Trending Tools</h6>
-          <div class="col-md-4 mb-4 ml-4" v-for="card in cards" :key="card.id">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{ card.title }}</h5>
-                <p class="card-text">{{ card.description }}</p>
-              </div>
-            </div>
-          </div>
+          <trending-tools></trending-tools>
         </div>
       </div>
     </div>
@@ -75,20 +69,22 @@
           <div class="card-body" v-if="isExpandedSortBy">
             <!-- Placeholder for checkbox filters -->
             <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 1
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 2
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 3
-                </label>
-              </div>
+              <label class="checkbox">
+                <input type="checkbox" /> Newest to Oldest
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Top Rated
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Most Favourites
+              </label>
+            </div>
           </div>
         </div>
 
@@ -103,20 +99,22 @@
           <div class="card-body" v-if="isExpandedPricing">
             <!-- Placeholder for checkbox filters -->
             <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 1
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 2
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 3
-                </label>
-              </div>
+              <label class="checkbox">
+                <input type="checkbox" /> Free
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Trial
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Paid
+              </label>
+            </div>
           </div>
         </div>
 
@@ -131,85 +129,221 @@
           <div class="card-body" v-if="isExpandedCategory">
             <!-- Placeholder for checkbox filters -->
             <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 1
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 2
-                </label>
-              </div>
-              <div class="form-group">
-                <label class="checkbox">
-                  <input type="checkbox" /> Filter 3
-                </label>
-              </div>
+              <label class="checkbox">
+                <input type="checkbox" /> Accounting/Finance
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> AI
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Branding
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Content Marketing
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Customer Support
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Data
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Development
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Marketing
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> No-Code
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Operations
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Personal
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Recruiting
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Sales
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Social Media
+              </label>
+            </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
           </div>
         </div>
       </div>
 
       <!-- Right Column -->
-      <div class="col-md-9">
+      <div class="col-md-9 ai-tool-list-container">
         <div class="row">
           <!-- Right Column Cards -->
-          <div class="col-md-4 mb-4" v-for="item in data" :key="item.id">
+          <div class="col-md-4 mb-4 ai-tool-list" v-for="card in displayedCards" :key="card.id">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">{{ item.tool_name }}</h5>
-                <p class="card-text">{{ item.tool_description }}</p>
+                <product-like-count></product-like-count>
+                <div class="upper-body" @click.prevent="redirectTo(card.tool_url)" style="cursor: pointer;">
+                  <h5 class="card-title">{{ card.tool_name }}</h5>
+                </div>
+                <product-rating></product-rating>
+                <div class="lower-body" @click.prevent="redirectTo(card.tool_url)" style="cursor: pointer;">
+                  <p class="card-text">{{ card.tool_description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <button class="btn btn-secondary" @click="redirectTo(item.tool_url)">Go to {{ item.tool_name }} webpage</button>
+          <div v-if="filteredCards.length === 0 && searchKeyword">
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <h4>No Results Found</h4>
+                  <p>Sorry, but we couldn't find any results matching your search criteria.</p>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Pagination -->
-          <ToolsPagination :current-page="currentPage" :total-pages="totalPages" @page-change="handlePageChange" />
+          <div class="pagination">
+            <button class="btn btn-light" @click="previousPage" :disabled="currentPage === 1"
+            style="border-radius: 5px 0px 0px 5px;">
+              <i class="fa-solid fa-arrow-left-long"></i>&nbsp;Previous
+            </button>
+            <button class="btn btn-light page-numbers" v-for="page in totalPages" :key="page" @click="goToPage(page)"
+              :class="{ active: currentPage === page }"
+              style="border-radius: 0px;">
+              {{ page }}
+            </button>
+            <button class="btn btn-light" @click="nextPage" :disabled="currentPage === totalPages"
+            style="border-radius: 0px 5px 5px 0px;">
+              Next&nbsp;<i class="fa-solid fa-arrow-right-long"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- <div>
-    <h1>AI Tools</h1>
-    <ul>
-      <li v-for="item in data" :key="item.id">{{ item.tool_name }}</li>
-    </ul>
-  </div> -->
 </template>
 
 <script>
 import axios from "axios";
-import ToolsPagination from "@/components/ToolsPagination.vue";
+import ProductRating from "@/components/ProductRating.vue";
+import ProductLikeCount from "@/components/ProductLikeCount.vue";
+import TrendingTools from "@/components/TrendingTools.vue";
+import FeaturedTool from "@/components/FeaturedTool.vue";
 
 export default {
   components: {
-    ToolsPagination,
+    ProductRating,
+    ProductLikeCount,
+    TrendingTools,
+    FeaturedTool,
   },
   data() {
     return {
-      data: [],
-      cards: [
-        { id: 1, title: "Card 1", description: "Card 1 Description" },
-        { id: 2, title: "Card 2", description: "Card 2 Description" },
-        { id: 3, title: "Card 3", description: "Card 3 Description" },
-        { id: 4, title: "Card 4", description: "Card 4 Description" },
-        { id: 5, title: "Card 5", description: "Card 5 Description" },
-        { id: 6, title: "Card 6", description: "Card 6 Description" },
-        // Add more cards as needed
-      ],
-      currentPage: 1,
-      totalPages: 10,
+      cards: [],
+      searchKeyword: "",
       isExpandedSortBy: false,
       isExpandedPricing: false,
       isExpandedCategory: false,
+      currentPage: 1,
+      itemsPerPage: 12,
     };
   },
+  mounted() {
+    this.fetchData();
+  },
+  computed: {
+    filteredCards() {
+      const keyword = this.searchKeyword.toLowerCase();
+      return this.cards.filter((card) => {
+        const title = card.tool_name ? card.tool_name.toLowerCase() : "";
+        const description = card.tool_description
+          ? card.tool_description.toLowerCase()
+          : "";
+        return title.includes(keyword) || description.includes(keyword);
+      });
+    },
+    totalPages() {
+      return Math.ceil(this.filteredCards.length / this.itemsPerPage);
+    },
+    displayedCards() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.filteredCards.slice(startIndex, endIndex);
+    },
+  },
   methods: {
-    handlePageChange(page) {
-      this.currentPage = page;
-      // Perform any necessary data fetching or updates based on the new page
+    fetchData() {
+      axios
+        .get("http://localhost:3000/ai_tools")
+        .then((response) => {
+          this.cards = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    filterData() {
+      this.currentPage = 1;
+    },
+    previousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    goToPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     },
     redirectTo(url) {
       window.open(url, "_blank");
@@ -224,36 +358,50 @@ export default {
       this.isExpandedCategory = !this.isExpandedCategory;
     },
   },
-  mounted() {
-    axios
-      .get("http://localhost:3000/ai_tools")
-      .then((response) => {
-        this.data = response.data;
-      })
-      .catch((error) => {
-        console.error("Error fetching data", error);
-      });
-  },
 };
 </script>
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 #header-section {
   padding: 4rem auto 4rem auto;
+
   .row {
     padding: 6rem;
   }
+
   .section-contents {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
 
-    > form {
+    >form {
       width: -webkit-fill-available;
     }
   }
+
+  .header-search-bar {
+    .form-control {
+      z-index: 0;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: transparent;
+      border-color: transparent;
+      color: inherit;
+      border: 1px solid #adb5bd;
+    }
+
+    .btn {
+      position: absolute;
+      z-index: 1;
+      top: 6px;
+      width: 175px;
+      right: 8px;
+      border-radius: 8px;
+    }
+  }
 }
+
 .bg-grey {
   background-color: #D9D9D9;
 }
@@ -261,5 +409,34 @@ export default {
 #featured-trending-section,
 #filter-and-tools-section {
   padding: 2rem;
+}
+
+.ai-tool-list-container {
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+
+    .page-numbers {
+      border-radius: none;
+    }
+  }
+
+  .ai-tool-list {
+    .card {
+      height: 23vh;
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+      }
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+    }
+  }
 }
 </style>
