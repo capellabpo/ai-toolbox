@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-const client = require("./databasepg.js");
+const client = require("../../db_cred/databasepg.js");
 const express = require("express");
 const cors = require("cors");
 const app = express();
