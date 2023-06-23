@@ -128,90 +128,15 @@
           <!-- Card body (content) with Vue conditional rendering -->
           <div class="card-body" v-if="isExpandedCategory">
             <!-- Placeholder for checkbox filters -->
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Accounting/Finance
-              </label>
+            <div class="category-container" v-for="category in categories" :key="category.ai_use_case_id">
+              <div class="form-group">
+                <label class="checkbox">
+                  <input type="checkbox" v-model="selectedCategories" :value="category.ai_use_case_id" @change="filterData" />
+                  {{ category.ai_use_case_category }}
+                </label>
+              </div>
+              <hr style="margin: 10px 1rem; opacity: .050;" />
             </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> AI
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Branding
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Content Marketing
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Customer Support
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Data
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Development
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Marketing
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> No-Code
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Operations
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Personal
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Recruiting
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Sales
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
-            <div class="form-group">
-              <label class="checkbox">
-                <input type="checkbox" /> Social Media
-              </label>
-            </div>
-            <hr style="margin: 10px 1rem; opacity: .050;" />
           </div>
         </div>
       </div>
@@ -220,15 +145,15 @@
       <div class="col-md-9 ai-tool-list-container">
         <div class="row">
           <!-- Right Column Cards -->
-          <div class="col-md-4 mb-4 ai-tool-list" v-for="card in displayedCards" :key="card.id">
+          <div class="col-md-4 mb-4 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
             <div class="card">
               <div class="card-body">
                 <product-like-count></product-like-count>
-                <div class="upper-body" @click.prevent="redirectTo(card.tool_url)" style="cursor: pointer;">
+                <div class="upper-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
                   <h5 class="card-title">{{ card.tool_name }}</h5>
                 </div>
                 <product-rating></product-rating>
-                <div class="lower-body" @click.prevent="redirectTo(card.tool_url)" style="cursor: pointer;">
+                <div class="lower-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
                   <p class="card-text">{{ card.tool_description }}</p>
                 </div>
               </div>
@@ -285,6 +210,8 @@ export default {
   data() {
     return {
       cards: [],
+      categories: [],
+      selectedCategories: [],
       searchKeyword: "",
       isExpandedSortBy: false,
       isExpandedPricing: false,
@@ -295,6 +222,7 @@ export default {
   },
   mounted() {
     this.fetchData();
+    this.fetchCategories();
   },
   computed: {
     filteredCards() {
@@ -304,7 +232,14 @@ export default {
         const description = card.tool_description
           ? card.tool_description.toLowerCase()
           : "";
-        return title.includes(keyword) || description.includes(keyword);
+        const hasKeyword =
+          title.includes(keyword) || description.includes(keyword);
+        const hasCategory =
+          this.selectedCategories.length === 0 ||
+          this.selectedCategories.every((category_filter) =>
+            card.use_case_id.includes(category_filter)
+          );
+        return hasKeyword && hasCategory;
       });
     },
     totalPages() {
@@ -327,6 +262,16 @@ export default {
           console.error("Error fetching data:", error);
         });
     },
+    fetchCategories() {
+      axios
+        .get("http://localhost:3000/ai_use_case") // Replace with your server URL
+        .then((response) => {
+          this.categories = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching use case", error);
+        });
+    },
     filterData() {
       this.currentPage = 1;
     },
@@ -345,8 +290,8 @@ export default {
         this.currentPage = page;
       }
     },
-    redirectTo(url) {
-      window.open(url, "_blank");
+    handleCardClick(cardId) {
+      this.$router.push({ name: "ToolDetails", params: { tool_id: cardId } });
     },
     toggleCardSortBy() {
       this.isExpandedSortBy = !this.isExpandedSortBy;

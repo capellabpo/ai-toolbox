@@ -55,6 +55,7 @@ export default {
     .navbar-brand {
       position: relative;
       bottom: 1px;
+      /* left: 24%; */
     }
 
     .navbar-nav {

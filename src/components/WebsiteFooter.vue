@@ -13,13 +13,13 @@
         <div class="col-md-6">
           <div class="social-icons">
             <a href="#" class="social-icon">
-              <i class="fa-brands fa-square-facebook"></i>
+              <i class="fa-brands fa-square-facebook fa-xl"></i>
             </a>
             <a href="#" class="social-icon">
-              <i class="fa-brands fa-square-instagram"></i>
+              <i class="fa-brands fa-square-instagram fa-xl"></i>
             </a>
             <a href="#" class="social-icon">
-              <i class="fa-brands fa-square-twitter"></i>
+              <i class="fa-brands fa-square-twitter fa-xl"></i>
             </a>
           </div>
         </div>

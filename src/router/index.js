@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import ToolDetails from "../components/ToolDetails.vue";
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
     name: "sign-in",
     component: () =>
       import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
+  },
+  {
+    path: "/tool/:tool_id",
+    name: "ToolDetails",
+    component: ToolDetails,
   },
 ];
 
