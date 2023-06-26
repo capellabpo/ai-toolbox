@@ -2,7 +2,7 @@
 <template>
   <div>
     <button class="like-button" @click="incrementCount">
-        <i class="fa fa-thumbs-up"></i><span>&nbsp;{{ likeCount }}</span>
+      <i class="fa-regular fa-thumbs-up fa-lg" style="color: #D9D9D9;"></i><span style="color: #D9D9D9">&nbsp;{{ likeCount }}</span>
     </button>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
 }
 
 .like-button i {
-    color: gray;
+    color: #D9D9D9;
     margin-right: 5px;
 }
 </style>

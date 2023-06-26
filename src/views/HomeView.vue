@@ -1,19 +1,21 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
   <!-- Header Section -->
-  <div class="container-fluid bg-grey" id="header-section">
+  <div class="container-fluid" id="header-section">
     <section>
       <div class="row">
         <div class="col-lg-8 offset-lg-2 section-contents">
-          <h1 class="mb-3">AI ToolBox</h1>
-          <p class="lead">Phasellus scelerisque elementum lorem, id hendrerit dolor dictum nec.</p>
+          <h1 class="mb-3">AI Toolbox</h1>
+          <p class="lead">Get ready to unlock new possibilities with the largest AI tools directory.</p>
 
           <!-- Search Bar -->
-          <form>
+          <form class="search-input">
             <div class="input-group mb-3 header-search-bar">
-              <input type="text" class="form-control" v-model="searchKeyword" placeholder="" @keyup.enter="filterData" />
+              <input type="text" class="form-control" v-model="searchKeyword" placeholder="Search AI tool here" @keyup.enter="filterData" />
               <div class="input-group-append">
-                <button class="btn btn-light" type="button" @click="filterData">Search</button>
+                <button class="btn" type="button" @click="filterData">
+                  <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #C8D2D1;"></i>
+                </button>
               </div>
             </div>
           </form>
@@ -29,13 +31,6 @@
       <div class="col-md-4">
         <!-- Featured Card -->
         <h6>Featured Tool</h6>
-        <!-- <div class="card">
-          <img class="card-img-top" alt="Featured Image" />
-          <div class="card-body">
-            <h5 class="card-title">Featured Card Title</h5>
-            <p class="card-text">Featured Card Description</p>
-          </div>
-        </div> -->
         <featured-tool></featured-tool>
       </div>
 
@@ -148,13 +143,22 @@
           <div class="col-md-4 mb-4 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
             <div class="card">
               <div class="card-body">
-                <product-like-count></product-like-count>
                 <div class="upper-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
-                  <h5 class="card-title">{{ card.tool_name }}</h5>
+                  <div class="card-title-container">
+                    <div style="display: flex;">
+                      <h5 class="card-title">{{ card.tool_name }}</h5>
+                      <product-rating class="star-rating"></product-rating>
+                    </div>
+                    <div>
+                      <product-like-count class="like-count"></product-like-count>
+                    </div>
+                  </div>
+                  <span class="badge badge-pill badge-light" v-for="useCase in card.use_case_id" :key="useCase.ai_use_case_id">{{ getCategoryName(useCase) }}</span>
+                  <!-- <div>
+                  </div> -->
                 </div>
-                <product-rating></product-rating>
-                <div class="lower-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
-                  <p class="card-text">{{ card.tool_description }}</p>
+                <div class="container lower-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
+                  <iframe :src="`${card.tool_url}`" class="iframe"></iframe>
                 </div>
               </div>
             </div>
@@ -302,16 +306,28 @@ export default {
     toggleCardCategory() {
       this.isExpandedCategory = !this.isExpandedCategory;
     },
+    getCategoryName(useCaseId) {
+      const category = this.categories.find(
+        (category) => category.ai_use_case_id === useCaseId
+      );
+      return category ? category.ai_use_case_category : "Category Not Found";
+    },
   },
 };
 </script>
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 #header-section {
+  background: rgb(200,210,209);
+  background: linear-gradient(180deg, rgba(200,210,209,1) 0%, rgba(200,210,209,1) 20%, rgba(200,210,209,0) 100%);
   padding: 4rem auto 4rem auto;
 
   .row {
     padding: 6rem;
+
+    .search-input {
+      margin-top: 3.5rem;
+    }
   }
 
   .section-contents {
@@ -327,33 +343,34 @@ export default {
 
   .header-search-bar {
     .form-control {
+      background-color: #FFFFFF;
       z-index: 0;
       padding: 12px;
-      border-radius: 8px;
-      background-color: transparent;
+      border-radius: 26px;
       border-color: transparent;
-      color: inherit;
-      border: 1px solid #adb5bd;
+      color: #A2A6A5;
+      border: 1px solid #14471E;
     }
 
     .btn {
       position: absolute;
       z-index: 1;
       top: 6px;
-      width: 175px;
-      right: 8px;
+      width: 55px;
+      right: 4px;
       border-radius: 8px;
     }
   }
 }
-
-.bg-grey {
-  background-color: #D9D9D9;
-}
-
+    
 #featured-trending-section,
 #filter-and-tools-section {
   padding: 2rem;
+}
+
+#filter-and-tools-section {
+  background: rgb(200,210,209);
+  background: linear-gradient(0deg, rgba(200,210,209,1) 0%, rgba(200,210,209,1) 5%, rgba(200,210,209,0) 20%);
 }
 
 .ai-tool-list-container {
@@ -369,18 +386,67 @@ export default {
 
   .ai-tool-list {
     .card {
-      height: 23vh;
+      height: 38vh;
+      border-radius: 10px;
+
+      .badge {
+        border: 1px solid #D9D9D9;
+        padding: 4px 12px;
+        border-radius: 14px;
+        margin-right: 5px;
+        color: #D9D9D9;
+      }
 
       .card-body {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: flex-start;
+        padding: 0;
+        .upper-body {
+          margin: 10px 10px 0px 45px;
+        }
+
+        .lower-body {
+          position: relative;
+          width: 100%;
+          height: auto;
+          padding-bottom: 64%;
+          overflow-y: hidden;
+          overflow-x: hidden;
+          margin-top: 10px;
+          box-sizing: border-box;
+          border-radius: 0px 0px 10px 10px;
+          .iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+
+            > html {
+              overflow: hidden;
+            }
+          }
+        }
       }
     }
 
-    .card-title {
-      font-size: 1.5rem;
+    .card-title-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      .card-title {
+        font-size: 1.5rem;
+      }
+
+      .star-rating {
+        margin-bottom: 6px;
+        margin-left: 12px;
+      }
     }
   }
 }

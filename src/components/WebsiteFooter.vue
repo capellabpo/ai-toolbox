@@ -5,8 +5,10 @@
       <div class="row">
         <!-- Left Column -->
         <div class="col-md-6">
-          <h4>AI ToolBox</h4>
-          <p>Design amazing digital experiences that create more happy in the world.</p>
+          <h4 style="color: #000000;">AI Toolbox</h4>
+          <p>Get ready to unlock new possibilities with
+            <br />the largest AI tools directory.
+          </p>
         </div>
 
         <!-- Right Column -->
@@ -48,11 +50,12 @@ export default {
 <!-- eslint-disable prettier/prettier -->
 <style>
 .footer {
-    background-color: #D9D9D9;
-    padding: 5rem 10rem 1rem 10rem;
+  background-color: #c8d2d1;
+  color: #475467;
+  padding: 5rem 10rem 1rem 10rem;
 
     .text-center {
-      color: #B3B3B3;
+      color: #475467;
     }
 }
 
@@ -63,10 +66,6 @@ export default {
 .social-icon {
   display: inline-block;
   margin-right: 10px;
-  color: #555;
-}
-
-.social-icon:hover {
-  color: #00acee;
+  color: #475467;
 }
 </style>

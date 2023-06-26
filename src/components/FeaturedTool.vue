@@ -58,9 +58,10 @@ export default {
 <style scoped>
 .card {
     height: 30vh;
-    border: 1px solid #ccc;
+    border: 2px solid #EE9B01;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: rgb(238, 155, 1) 0px 0px 16px -7px;
 }
 
 .card-header {

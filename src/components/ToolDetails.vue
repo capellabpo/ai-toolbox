@@ -386,6 +386,7 @@ export default {
         getColumnDataArray() {
             const proxyArray = this.categories;
             const standardArray = Array.from(proxyArray).map(proxy => Object.assign({}, proxy));
+            console.log(this.categoryBadge);
             return this.columnDataArray = this.categoryBadge.map(number => {
                 const matchedItem = standardArray.find(item => item.ai_use_case_id === number);
                 console.log(matchedItem);
@@ -393,17 +394,6 @@ export default {
             });
         }
     },
-    // computed: {
-    //     transformedArray() {
-    //         const proxyArray = this.categories;
-    //         const standardArray = Array.from(proxyArray).map(proxy => Object.assign({}, proxy));
-    //         return this.columnDataArray = this.categoryBadge.map(number => {
-    //             const matchedItem = standardArray.find(item => item.ai_use_case_id === number);
-    //             console.log(matchedItem);
-    //             return matchedItem ? matchedItem.ai_use_case_name : null;
-    //         });
-    //     }
-    // }
 };
 </script>
 <!-- eslint-disable prettier/prettier -->

@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
 const { Client } = require("pg");
+require('dotenv').config();
+
 
 const client = new Client({
   host: process.env.VUE_APP_DB_HOST,

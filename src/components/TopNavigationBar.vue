@@ -2,7 +2,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <router-link class="navbar-brand" to="/">AI ToolBox</router-link>
+      <!-- <router-link class="navbar-brand" to="/">AI ToolBox</router-link>
       <button
         class="navbar-toggler nav-button"
         type="button"
@@ -13,7 +13,7 @@
         aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
-      </button>
+      </button> -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item" :class="{ 'active': $route.path === '/featured' }">
@@ -25,14 +25,17 @@
           <li class="nav-item" :class="{ 'active': $route.path === '/community' }">
             <router-link class="nav-link" to="/community">Community</router-link>
           </li>
-          <li class="nav-item" :class="{ 'active': $route.path === '/submit-tool' }">
-            <router-link class="nav-link" to="/submit-tool">Submit Tool</router-link>
+          <li class="nav-item" :class="{ 'active': $route.path === '/sign-in' }">
+            <router-link class="nav-link" to="/sign-in">Sign In</router-link>
           </li>
           &nbsp;
           &nbsp;
           &nbsp;
-          <li class="nav-item" :class="{ 'active': $route.path === '/sign-in' }">
-            <router-link class="nav-link" to="/sign-in">Sign In</router-link>
+          <li class="nav-item" :class="{ 'active': $route.path === '/submit-tool' }"
+          style="background-color: #EE9B01;
+          border-radius: 26px;
+          padding: 0px 8px;">
+            <router-link class="nav-link" to="/submit-tool">Submit Tool</router-link>
           </li>
         </ul>
       </div>
@@ -48,9 +51,9 @@ export default {
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 .navbar {
-    .container {
+    /* .container {
       width: 32%;
-    }
+    } */
 
     .navbar-brand {
       position: relative;
@@ -63,7 +66,7 @@ export default {
     }
 }
 .navbar-nav .nav-item.active .nav-link {
-  background: #D9D9D9;
+  /* background: #D9D9D9; */
   color: #000000 !important;
   border-radius: 10px;
   font-weight: 500;
@@ -75,6 +78,6 @@ export default {
 
 .bg-light {
   --bs-bg-opacity: 1;
-  background-color: #838383 !important;
+  background-color: #68904D !important;
 }
 </style>

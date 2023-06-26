@@ -29,11 +29,16 @@ export default {
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 .rating {
-    font-size: 15px;
+    font-size: 22px;
+}
+
+.rating span:last-child {
+    font-size: 18px;
+    color: #D9D9D9;
 }
 
 .star {
-    color: gray;
+    color: #D9D9D9;
     cursor: pointer;
 }
 
