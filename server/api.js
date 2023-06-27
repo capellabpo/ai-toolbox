@@ -23,6 +23,17 @@ app.get("/ai_tools/", (req, res) => {
     client.end;
 });
 
+app.get("/ai_tools/file_path", (req, res) => {
+    client.query(`Select tool_id, screenshot_file_path from public.ai_tools`, (err, result) => {
+        if(!err) {
+            res.send(result.rows);
+        } else {
+            console.log(err);
+        }
+    });
+    client.end;
+});
+
 app.get("/ai_tools/tool/:id", (req, res) => {
     const userId = req.params.id;
 

@@ -28,14 +28,14 @@
   <div class="container-fluid mt-4" id="featured-trending-section">
     <div class="row">
       <!-- Left Column -->
-      <div class="col-md-4">
+      <div class="col col-md-5">
         <!-- Featured Card -->
         <h6>Featured Tool</h6>
         <featured-tool></featured-tool>
       </div>
 
       <!-- Right Column -->
-      <div class="col-md-8">
+      <div class="col col-md-7">
         <div class="row">
           <!-- Left Column Cards -->
           <h6>Trending Tools</h6>
@@ -51,7 +51,7 @@
   <div class="container-fluid mt-4" id="filter-and-tools-section">
     <div class="row">
       <!-- Left Column -->
-      <div class="col-md-3">
+      <div class="col-md-2">
         <!-- Expandable Checkbox Filters -->
         <!-- Bootstrap card -->
         <div class="card mb-4">
@@ -137,28 +137,30 @@
       </div>
 
       <!-- Right Column -->
-      <div class="col-md-9 ai-tool-list-container">
+      <div class="col-md-10 ai-tool-list-container">
         <div class="row">
           <!-- Right Column Cards -->
-          <div class="col-md-4 mb-4 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
+          <div class="col-md-4 mb-5 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
             <div class="card">
               <div class="card-body">
                 <div class="upper-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
                   <div class="card-title-container">
                     <div style="display: flex;">
+                      <div class="tool-pricing-icon">
+                        <i class="fa-solid fa-dollar-sign fa-xl pricing-icon" style="color: #ffffff;"></i>
+                      </div>
                       <h5 class="card-title">{{ card.tool_name }}</h5>
-                      <product-rating class="star-rating"></product-rating>
+                      <tool-star-rating class="star-rating" :selected-star="`${card.star_rating}`"></tool-star-rating>
+                      <p hidden> {{ card.tool_description }} </p>
                     </div>
                     <div>
-                      <product-like-count class="like-count"></product-like-count>
+                      <tool-rank-count-display class="like-count" :like-count="`${card.like_count}`"></tool-rank-count-display>
                     </div>
                   </div>
                   <span class="badge badge-pill badge-light" v-for="useCase in card.use_case_id" :key="useCase.ai_use_case_id">{{ getCategoryName(useCase) }}</span>
-                  <!-- <div>
-                  </div> -->
                 </div>
-                <div class="container lower-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
-                  <iframe :src="`${card.tool_url}`" class="iframe"></iframe>
+                <div class="container lower-body">
+                  <img class="tool-image" :src="getImageUrl(card.screenshot_file_path)" :alt="card.tool_name"/>
                 </div>
               </div>
             </div>
@@ -199,15 +201,15 @@
 
 <script>
 import axios from "axios";
-import ProductRating from "@/components/ProductRating.vue";
-import ProductLikeCount from "@/components/ProductLikeCount.vue";
+import ToolStarRating from "@/components/ToolStarRating.vue";
+import ToolRankCountDisplay from "@/components/ToolRankCountDisplay.vue";
 import TrendingTools from "@/components/TrendingTools.vue";
 import FeaturedTool from "@/components/FeaturedTool.vue";
 
 export default {
   components: {
-    ProductRating,
-    ProductLikeCount,
+    ToolStarRating,
+    ToolRankCountDisplay,
     TrendingTools,
     FeaturedTool,
   },
@@ -216,7 +218,9 @@ export default {
       cards: [],
       categories: [],
       selectedCategories: [],
+      imagePaths: [],
       searchKeyword: "",
+      imagePath: "",
       isExpandedSortBy: false,
       isExpandedPricing: false,
       isExpandedCategory: false,
@@ -276,6 +280,17 @@ export default {
           console.error("Error fetching use case", error);
         });
     },
+    fetchFilePath() {
+      axios
+        .get("http://localhost:3000/ai_tools/file_path") // Replace with your server URL
+        .then((response) => {
+          // console.log(response.data);
+          this.imagePaths = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching use case", error);
+        });
+    },
     filterData() {
       this.currentPage = 1;
     },
@@ -311,6 +326,10 @@ export default {
         (category) => category.ai_use_case_id === useCaseId
       );
       return category ? category.ai_use_case_category : "Category Not Found";
+    },
+    getImageUrl(filePath) {
+      // Assuming your images are stored in the 'public' folder of your Vue project
+      return require("@/assets/imgs/webpage_ss/" + filePath);
     },
   },
 };
@@ -373,6 +392,14 @@ export default {
   background: linear-gradient(0deg, rgba(200,210,209,1) 0%, rgba(200,210,209,1) 5%, rgba(200,210,209,0) 20%);
 }
 
+#featured-trending-section {
+  height: 100%;
+
+  .row {
+    max-height: 68vh;
+  }
+}
+
 .ai-tool-list-container {
 
   .pagination {
@@ -385,19 +412,21 @@ export default {
   }
 
   .ai-tool-list {
+    height: 290px;
     .card {
-      height: 38vh;
+      height: 32vh;
       border-radius: 10px;
 
       .badge {
         border: 1px solid #D9D9D9;
         padding: 4px 12px;
         border-radius: 14px;
-        margin-right: 5px;
+        margin: 2px;
         color: #D9D9D9;
       }
 
       .card-body {
+        height: 32vh;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
@@ -407,27 +436,23 @@ export default {
           margin: 10px 10px 0px 45px;
         }
 
-        .lower-body {
-          position: relative;
-          width: 100%;
-          height: auto;
-          padding-bottom: 64%;
-          overflow-y: hidden;
-          overflow-x: hidden;
-          margin-top: 10px;
-          box-sizing: border-box;
-          border-radius: 0px 0px 10px 10px;
-          .iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+        .upper-body {
+          height: 9vh;
+        }
 
-            > html {
-              overflow: hidden;
-            }
+        .lower-body {
+          margin-top: 10px;
+          border-radius: 0px 0px 10px 10px;
+          padding: 0px;
+          position: absolute;
+          width: 100%;
+          bottom: 0;
+          .tool-image {
+            width: 100%;
+            height: 199px;
+            border: 1px solid #D9D9D9;
+            border-radius: 0px 0px 10px 10px;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 25px 0px inset;
           }
         }
       }
@@ -439,6 +464,21 @@ export default {
       justify-content: space-between;
       align-items: flex-start;
       flex-wrap: wrap;
+
+      .tool-pricing-icon {
+        background: linear-gradient(169deg, rgba(238,155,1,1) 0%, rgba(238,155,1,0.8995973389355743) 35%, rgba(238,155,1,0.25253851540616246) 100%);
+        position: absolute;
+        left: 0;
+        top: 12px;
+        width: 2.3rem;
+        height: 4rem;
+        border-radius: 0px 8px 8px 0px;
+
+        .pricing-icon {
+          margin: 11px;
+          padding-top: 9px;
+        }
+      }
       .card-title {
         font-size: 1.5rem;
       }

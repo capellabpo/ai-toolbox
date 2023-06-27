@@ -130,7 +130,7 @@
                                 <div class="col" style="display: flex;
                                 flex-direction: column;
                                 align-items: flex-end;">
-                                    <product-like-count></product-like-count>
+                                    <tool-rank-count-display></tool-rank-count-display>
                                     <div class="date">
                                         <i class="fa-regular fa-calendar"></i>&nbsp;<span>MM/DD/YYYY</span>
                                     </div>
@@ -184,7 +184,7 @@
                                         Share your experience with the community.
                                     </small>
                                 </div>
-                                <product-rating></product-rating>
+                                <tool-star-rating></tool-star-rating>
                             </div>
 
                             <div class="form-group">
@@ -200,7 +200,7 @@
                             <div class="container review-container">
                                 <div class="container header-review">
                                     <label for="">User 1</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <product-rating></product-rating>
+                                    <tool-star-rating></tool-star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -213,7 +213,7 @@
                             <div class="container review-container">
                                 <div class="container header-review">
                                     <label for="">User 2</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <product-rating></product-rating>
+                                    <tool-star-rating></tool-star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -226,7 +226,7 @@
                             <div class="container review-container">
                                 <div class="container header-review">
                                     <label for="">User 3</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <product-rating></product-rating>
+                                    <tool-star-rating></tool-star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -245,7 +245,7 @@
                             <div class="rating-details">
                                 <h5>Overall Rating</h5>
                                 <div class="rating-number">5</div>
-                                <product-rating></product-rating>
+                                <tool-star-rating></tool-star-rating>
                                 <small>Based on 1 review</small>
                             </div>
 
@@ -310,15 +310,15 @@
 <script>
 import axios from 'axios';
 import TrendingTools from "./TrendingTools.vue";
-import ProductLikeCount from "./ProductLikeCount.vue";
-import ProductRating from "./ProductRating.vue";
+import ToolRankCountDisplay from "./ToolRankCountDisplay.vue";
+import ToolStarRating from "./ToolStarRating.vue";
 
 export default {
     name: "ToolDetails",
     components: {
         TrendingTools,
-        ProductLikeCount,
-        ProductRating,
+        ToolRankCountDisplay,
+        ToolStarRating,
     },
     data() {
         return {

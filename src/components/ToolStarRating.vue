@@ -13,15 +13,16 @@
 <!-- eslint-disable prettier/prettier -->
 <script>
 export default {
+    props: ['selectedStar'], // Declare selectedStar as a prop
     data() {
         return {
-            selectedStar: 0,
             stars: [1, 2, 3, 4, 5],
         };
     },
     methods: {
         selectStar(star) {
-            this.selectedStar = star;
+            // Emit an event to notify the parent component that the selected star has changed
+            this.$emit('star-selected', star);
         },
     },
 };
@@ -31,18 +32,17 @@ export default {
 .rating {
     font-size: 22px;
 }
-
 .rating span:last-child {
-    font-size: 18px;
-    color: #D9D9D9;
+font-size: 18px;
+color: #D9D9D9;
 }
 
 .star {
-    color: #D9D9D9;
-    cursor: pointer;
+color: #D9D9D9;
+cursor: pointer;
 }
 
 .filled {
-    color: gold;
+color: gold;
 }
 </style>

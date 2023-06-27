@@ -11,8 +11,8 @@
                 flex-direction: column;
                 align-items: flex-end;"
                 >
-                    <product-like-count></product-like-count>
-                    <product-rating></product-rating>
+                    <tool-rank-count-display></tool-rank-count-display>
+                    <tool-star-rating></tool-star-rating>
                 </div>
             </div>
         </div>
@@ -26,8 +26,8 @@
 <!-- eslint-disable prettier/prettier -->
 
 <script>
-import ProductLikeCount from './ProductLikeCount.vue';
-import ProductRating from './ProductRating.vue';
+import ToolRankCountDisplay from './ToolRankCountDisplay.vue';
+import ToolStarRating from './ToolStarRating.vue';
 
 export default {
     props: {
@@ -37,8 +37,8 @@ export default {
         },
     },
     components: {
-        ProductLikeCount,
-        ProductRating,
+        ToolRankCountDisplay,
+        ToolStarRating,
     },
     data() {
         return {
@@ -57,7 +57,7 @@ export default {
 
 <style scoped>
 .card {
-    height: 30vh;
+    height: 70%;
     border: 2px solid #EE9B01;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -79,7 +79,7 @@ export default {
 
     > img {
         width: 100%;
-        height: 10vw;
+        height: 69%;
         background-color: currentColor;
     }
 }
