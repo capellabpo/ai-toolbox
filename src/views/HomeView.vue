@@ -11,7 +11,8 @@
           <!-- Search Bar -->
           <form class="search-input">
             <div class="input-group mb-3 header-search-bar">
-              <input type="text" class="form-control" v-model="searchKeyword" placeholder="Search AI tool here" @keyup.enter="filterData" />
+              <input type="text" class="form-control" v-model="searchKeyword" placeholder="Search AI tool here"
+                @keyup.enter="filterData" />
               <div class="input-group-append">
                 <button class="btn" type="button" @click="filterData">
                   <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #C8D2D1;"></i>
@@ -25,21 +26,21 @@
   </div>
 
   <!-- Featured and Trending Tools section -->
-  <div class="container-fluid mt-4" id="featured-trending-section">
+  <div class="container-fluid mt-4" id="featured-trending-section" v-if="hideElements">
     <div class="row">
       <!-- Left Column -->
       <div class="col col-md-5">
         <!-- Featured Card -->
-        <h6>Featured Tool</h6>
-        <featured-tool></featured-tool>
+        <h5 class="mb-4">Featured Tool</h5>
+        <featured-tool :cards="cards"></featured-tool>
       </div>
 
       <!-- Right Column -->
       <div class="col col-md-7">
         <div class="row">
           <!-- Left Column Cards -->
-          <h6>Trending Tools</h6>
-          <trending-tools></trending-tools>
+          <h5 class="mb-4">Trending Tools</h5>
+          <trending-tools :cards="cards"></trending-tools>
         </div>
       </div>
     </div>
@@ -56,8 +57,12 @@
         <!-- Bootstrap card -->
         <div class="card mb-4">
           <!-- Card header with toggle button -->
-          <div class="card-header" @click="toggleCardSortBy">
+          <div class="card-header" id="category-headers" @click="toggleCardSortBy">
             <h5 class="mb-0">Sort By</h5>
+            <div>
+              <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedSortBy, 'fa-regular fa-circle-down fa-lg': !isExpandedSortBy }"
+                style="color: #C8D2D1;"></i>
+            </div>
           </div>
 
           <!-- Card body (content) with Vue conditional rendering -->
@@ -86,8 +91,12 @@
         <!-- Bootstrap card -->
         <div class="card mb-4">
           <!-- Card header with toggle button -->
-          <div class="card-header" @click="toggleCardPricing">
+          <div class="card-header" id="category-headers" @click="toggleCardPricing">
             <h5 class="mb-0">Pricing</h5>
+            <div>
+              <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedPricing, 'fa-regular fa-circle-down fa-lg': !isExpandedPricing }"
+                style="color: #C8D2D1;"></i>
+            </div>
           </div>
 
           <!-- Card body (content) with Vue conditional rendering -->
@@ -110,27 +119,41 @@
                 <input type="checkbox" /> Paid
               </label>
             </div>
+            <hr style="margin: 10px 1rem; opacity: .050;" />
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" /> Premium
+              </label>
+            </div>
           </div>
         </div>
 
         <!-- Bootstrap card -->
         <div class="card mb-4">
           <!-- Card header with toggle button -->
-          <div class="card-header" @click="toggleCardCategory">
+          <div class="card-header" id="category-headers" @click="toggleCardCategory">
             <h5 class="mb-0">Categories</h5>
+            <div>
+              <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedCategory, 'fa-regular fa-circle-down fa-lg': !isExpandedCategory }"
+                style="color: #C8D2D1;"></i>
+            </div>
           </div>
 
           <!-- Card body (content) with Vue conditional rendering -->
-          <div class="card-body" v-if="isExpandedCategory">
+          <div class="card-body card-filters" v-if="isExpandedCategory">
             <!-- Placeholder for checkbox filters -->
-            <div class="category-container" v-for="category in categories" :key="category.ai_use_case_id">
+            <div class="category-container" v-for="category in allCategories" :key="category">
               <div class="form-group">
                 <label class="checkbox">
-                  <input type="checkbox" v-model="selectedCategories" :value="category.ai_use_case_id" @change="filterData" />
-                  {{ category.ai_use_case_category }}
+                  <input class="form-check-input" type="checkbox" v-model="selectedCategories" :value="category"
+                    @change="filterData" />
+                  {{ getCategoryName(category) }}
                 </label>
+                <div class="form-text">
+                  ({{ categoryCounts[category] }})
+                </div>
               </div>
-              <hr style="margin: 10px 1rem; opacity: .050;" />
+              <hr style="margin: 10px 0rem; opacity: .050;" />
             </div>
           </div>
         </div>
@@ -140,8 +163,8 @@
       <div class="col-md-10 ai-tool-list-container">
         <div class="row">
           <!-- Right Column Cards -->
-          <div class="col-md-4 mb-5 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
-            <div class="card">
+          <!-- <div class="col-md-4 mb-5 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
+            <div class="card d-flex flex-column">
               <div class="card-body">
                 <div class="upper-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
                   <div class="card-title-container">
@@ -154,17 +177,57 @@
                       <p hidden> {{ card.tool_description }} </p>
                     </div>
                     <div>
-                      <tool-rank-count-display class="like-count" :like-count="`${card.like_count}`"></tool-rank-count-display>
+                      <tool-rank-count-display class="like-count"
+                        :overall-rating="`${card.sum_likes_rating}`"></tool-rank-count-display>
                     </div>
                   </div>
-                  <span class="badge badge-pill badge-light" v-for="useCase in card.use_case_id" :key="useCase.ai_use_case_id">{{ getCategoryName(useCase) }}</span>
+                  <span class="badge badge-pill badge-light" v-for="useCase in card.use_case_id"
+                    :key="useCase.ai_use_case_id">{{ getCategoryName(useCase) }}</span>
                 </div>
-                <div class="container lower-body">
-                  <img class="tool-image" :src="getImageUrl(card.screenshot_file_path)" :alt="card.tool_name"/>
+                <div class="container lower-body" @click.prevent="handleCardClick(card.tool_id)" style="cursor: pointer;">
+                  <card-on-hover :description="card.tool_description">
+                    <img class="tool-image" :src="getImageUrl(card.screenshot_file_path)" :alt="card.tool_name" />
+                  </card-on-hover>
                 </div>
               </div>
             </div>
+          </div> -->
+
+          <div class="col-md-4 mb-5 ai-tool-list" v-for="card in displayedCards" :key="card.tool_id">
+            <div class="card">
+              <div class="card-header" id="card-header" @click.prevent="handleCardClick(card.tool_id)"
+                style="cursor: pointer;">
+                <div class="card-title-container">
+                  <div style="display: flex;">
+                    <div class="tool-pricing-icon">
+                      <i class="fa-solid fa-dollar-sign fa-xl pricing-icon" style="color: #ffffff;"></i>
+                    </div>
+                    <h5 class="card-title">{{ card.tool_name }}</h5>
+                    <tool-star-rating class="star-rating" :selected-star="`${card.star_rating}`"></tool-star-rating>
+                    <p hidden>{{ card.tool_description }}</p>
+                  </div>
+                  <div>
+                    <tool-rank-count-display class="like-count"
+                      :overall-rating="`${card.sum_likes_rating}`"></tool-rank-count-display>
+                  </div>
+                </div>
+                <span class="badge badge-pill badge-light" v-for="useCase in card.use_case_id"
+                  :key="useCase.ai_use_case_id">
+                  {{ getCategoryName(useCase) }}
+                </span>
+              </div>
+              <div class="card-body" id="card-body" @click.prevent="handleCardClick(card.tool_id)"
+                style="cursor: pointer;">
+                <div class="card-image-wrapper">
+                  <img class="img-fluid tool-image" :src="getImageUrl(card.screenshot_file_path)" :alt="card.tool_name" />
+                </div>
+                <card-on-hover :description="card.tool_description"></card-on-hover>
+              </div>
+            </div>
           </div>
+
+
+
 
           <div v-if="filteredCards.length === 0 && searchKeyword">
             <div class="container">
@@ -180,16 +243,15 @@
           <!-- Pagination -->
           <div class="pagination">
             <button class="btn btn-light" @click="previousPage" :disabled="currentPage === 1"
-            style="border-radius: 5px 0px 0px 5px;">
+              style="border-radius: 5px 0px 0px 5px;">
               <i class="fa-solid fa-arrow-left-long"></i>&nbsp;Previous
             </button>
             <button class="btn btn-light page-numbers" v-for="page in totalPages" :key="page" @click="goToPage(page)"
-              :class="{ active: currentPage === page }"
-              style="border-radius: 0px;">
+              :class="{ active: currentPage === page }" style="border-radius: 0px;">
               {{ page }}
             </button>
             <button class="btn btn-light" @click="nextPage" :disabled="currentPage === totalPages"
-            style="border-radius: 0px 5px 5px 0px;">
+              style="border-radius: 0px 5px 5px 0px;">
               Next&nbsp;<i class="fa-solid fa-arrow-right-long"></i>
             </button>
           </div>
@@ -205,6 +267,7 @@ import ToolStarRating from "@/components/ToolStarRating.vue";
 import ToolRankCountDisplay from "@/components/ToolRankCountDisplay.vue";
 import TrendingTools from "@/components/TrendingTools.vue";
 import FeaturedTool from "@/components/FeaturedTool.vue";
+import CardOnHover from "@/components/CardOnHover.vue";
 
 export default {
   components: {
@@ -212,18 +275,19 @@ export default {
     ToolRankCountDisplay,
     TrendingTools,
     FeaturedTool,
+    CardOnHover,
   },
   data() {
     return {
       cards: [],
       categories: [],
       selectedCategories: [],
-      imagePaths: [],
       searchKeyword: "",
       imagePath: "",
       isExpandedSortBy: false,
       isExpandedPricing: false,
       isExpandedCategory: false,
+      isUp: false,
       currentPage: 1,
       itemsPerPage: 12,
     };
@@ -258,6 +322,31 @@ export default {
       const endIndex = startIndex + this.itemsPerPage;
       return this.filteredCards.slice(startIndex, endIndex);
     },
+    allCategories() {
+      const categories = new Set();
+      this.cards.forEach((card) => {
+        card.use_case_id.forEach((category) => {
+          categories.add(category);
+        });
+      });
+      return Array.from(categories);
+    },
+    categoryCounts() {
+      const counts = {};
+      this.cards.forEach((card) => {
+        card.use_case_id.forEach((category) => {
+          if (counts[category]) {
+            counts[category]++;
+          } else {
+            counts[category] = 1;
+          }
+        });
+      });
+      return counts;
+    },
+    hideElements() {
+      return this.searchKeyword.length <= 0;
+    },
   },
   methods: {
     fetchData() {
@@ -275,17 +364,6 @@ export default {
         .get("http://localhost:3000/ai_use_case") // Replace with your server URL
         .then((response) => {
           this.categories = response.data;
-        })
-        .catch((error) => {
-          console.error("Error fetching use case", error);
-        });
-    },
-    fetchFilePath() {
-      axios
-        .get("http://localhost:3000/ai_tools/file_path") // Replace with your server URL
-        .then((response) => {
-          // console.log(response.data);
-          this.imagePaths = response.data;
         })
         .catch((error) => {
           console.error("Error fetching use case", error);
@@ -337,8 +415,8 @@ export default {
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 #header-section {
-  background: rgb(200,210,209);
-  background: linear-gradient(180deg, rgba(200,210,209,1) 0%, rgba(200,210,209,1) 20%, rgba(200,210,209,0) 100%);
+  background: rgb(200, 210, 209);
+  background: linear-gradient(180deg, rgba(200, 210, 209, 1) 0%, rgba(200, 210, 209, 1) 20%, rgba(200, 210, 209, 0) 100%);
   padding: 4rem auto 4rem auto;
 
   .row {
@@ -381,18 +459,44 @@ export default {
     }
   }
 }
-    
-#featured-trending-section,
-#filter-and-tools-section {
-  padding: 2rem;
-}
 
 #filter-and-tools-section {
-  background: rgb(200,210,209);
-  background: linear-gradient(0deg, rgba(200,210,209,1) 0%, rgba(200,210,209,1) 5%, rgba(200,210,209,0) 20%);
+  padding: 2rem;
+  background: rgb(200, 210, 209);
+  background: linear-gradient(0deg, rgba(200, 210, 209, 1) 0%, rgba(200, 210, 209, 1) 5%, rgba(200, 210, 209, 0) 20%);
+
+  #card-header {
+    margin-left: 2rem;
+    padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
+    margin-bottom: 0;
+    color: var(--bs-card-cap-color);
+    background-color: #FFF;
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+  }
+
+  #category-headers {
+    display: flex;
+    justify-content: space-between;
+    color: var(--bs-card-cap-color);
+    background-color: #FFF;
+    border-bottom: none;
+    border-radius: 10px;
+  }
+
+  .card-filters {
+    .form-group {
+      display: flex;
+
+      .form-text {
+        margin-left: 5px;
+      }
+    }
+  }
 }
 
 #featured-trending-section {
+  padding: 0rem 2rem 5.5rem 2rem;
   height: 100%;
 
   .row {
@@ -401,7 +505,6 @@ export default {
 }
 
 .ai-tool-list-container {
-
   .pagination {
     display: flex;
     justify-content: center;
@@ -413,8 +516,12 @@ export default {
 
   .ai-tool-list {
     height: 290px;
+
     .card {
-      height: 32vh;
+      overflow-y: hidden;
+      overflow: hidden;
+      position: relative;
+      height: 32.3vh;
       border-radius: 10px;
 
       .badge {
@@ -425,35 +532,28 @@ export default {
         color: #D9D9D9;
       }
 
-      .card-body {
-        height: 32vh;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        padding: 0;
-        .upper-body {
-          margin: 10px 10px 0px 45px;
-        }
+      #card-body {
+        border-radius: 0px 0px 10px 10px;
+        padding: 0px;
+        height: 0;
+        /* Set initial height to 0 to allow the aspect ratio to be preserved */
+        padding-bottom: 65%;
+        /* Set the desired aspect ratio (e.g., 4:3 = 75%) */
+        position: relative;
+        overflow: hidden;
 
-        .upper-body {
-          height: 9vh;
-        }
-
-        .lower-body {
-          margin-top: 10px;
+        .tool-image {
+          border: 1px solid #D9D9D9;
           border-radius: 0px 0px 10px 10px;
-          padding: 0px;
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 25px 0px inset;
           position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
-          bottom: 0;
-          .tool-image {
-            width: 100%;
-            height: 199px;
-            border: 1px solid #D9D9D9;
-            border-radius: 0px 0px 10px 10px;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 25px 0px inset;
-          }
+          height: 100%;
+          object-fit: cover;
+          overflow: hidden;
+          /* Ensure the image covers the entire wrapper */
         }
       }
     }
@@ -466,7 +566,7 @@ export default {
       flex-wrap: wrap;
 
       .tool-pricing-icon {
-        background: linear-gradient(169deg, rgba(238,155,1,1) 0%, rgba(238,155,1,0.8995973389355743) 35%, rgba(238,155,1,0.25253851540616246) 100%);
+        background: linear-gradient(169deg, rgba(238, 155, 1, 1) 0%, rgba(238, 155, 1, 0.8995973389355743) 35%, rgba(238, 155, 1, 0.25253851540616246) 100%);
         position: absolute;
         left: 0;
         top: 12px;
@@ -479,15 +579,17 @@ export default {
           padding-top: 9px;
         }
       }
+
       .card-title {
         font-size: 1.5rem;
       }
 
       .star-rating {
+        position: relative;
+        bottom: 4px;
         margin-bottom: 6px;
         margin-left: 12px;
       }
     }
   }
-}
-</style>
+}</style>

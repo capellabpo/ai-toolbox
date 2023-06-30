@@ -2,14 +2,14 @@
 <template>
   <div>
     <button class="like-button">
-      <i class="fa-regular fa-thumbs-up fa-lg" style="color: #D9D9D9;"></i><span style="color: #D9D9D9" :key="tool_id">&nbsp;{{ likeCount }}</span>
+      <i class="fa-regular fa-thumbs-up fa-lg" style="color: #D9D9D9;"></i><span style="color: #D9D9D9" :key="tool_id">&nbsp;{{ overallRating }}</span>
     </button>
   </div>
 </template>
 <!-- eslint-disable prettier/prettier -->
 <script>
 export default {
-    props: ['likeCount'],
+    props: ['overallRating'],
 };
 </script>
 <!-- eslint-disable prettier/prettier -->

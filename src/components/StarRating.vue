@@ -6,7 +6,6 @@
                 @click="selectStar(star)">
                 &#9733;
             </span>
-            <span> ({{ selectedStar }})</span>
         </div>
     </div>
 </template>
@@ -30,20 +29,19 @@ export default {
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 .rating {
-    font-size: 22px;
+    font-size: 30px;
 }
-
 .rating span:last-child {
-    font-size: 18px;
-    color: #D9D9D9;
+font-size: 30px;
+color: #D9D9D9;
 }
 
 .star {
-    color: #D9D9D9;
-    cursor: pointer;
+color: #D9D9D9;
+cursor: pointer;
 }
 
 .filled {
-    color: gold;
+color: gold;
 }
 </style>

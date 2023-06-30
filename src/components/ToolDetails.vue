@@ -9,11 +9,14 @@
                     <p class="lead">Phasellus scelerisque elementum lorem, id hendrerit dolor dictum nec.</p>
 
                     <!-- Search Bar -->
-                    <form>
+                    <form class="search-input">
                         <div class="input-group mb-3 header-search-bar">
-                            <input type="text" class="form-control" placeholder="" />
+                            <input type="text" class="form-control" v-model="searchKeyword"
+                                placeholder="Search AI tool here" @keyup.enter="filterData" />
                             <div class="input-group-append">
-                                <button class="btn btn-light" type="button">Search</button>
+                                <button class="btn" type="button" @click="filterData">
+                                    <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #C8D2D1;"></i>
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -23,16 +26,20 @@
     </div>
 
     <!-- AI Tools filter and cards -->
-    <div class="container-fluid mt-5">
+    <div class="container-fluid mt-5" id="filter-and-tools-section">
         <div class="row">
             <!-- Left Column -->
-            <div class="col-md-3" id="checkbox-filters-container">
+            <div class="col-md-2" id="checkbox-filters-container">
                 <!-- Expandable Checkbox Filters -->
                 <!-- Bootstrap card -->
                 <div class="card mb-4">
                     <!-- Card header with toggle button -->
                     <div class="card-header" @click="toggleCardSortBy">
                         <h5 class="mb-0">Sort By</h5>
+                        <div>
+                            <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedSortBy, 'fa-regular fa-circle-down fa-lg': !isExpandedSortBy }"
+                                style="color: #C8D2D1;"></i>
+                        </div>
                     </div>
 
                     <!-- Card body (content) with Vue conditional rendering -->
@@ -63,6 +70,10 @@
                     <!-- Card header with toggle button -->
                     <div class="card-header" @click="toggleCardPricing">
                         <h5 class="mb-0">Pricing</h5>
+                        <div>
+                            <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedPricing, 'fa-regular fa-circle-down fa-lg': !isExpandedPricing }"
+                                style="color: #C8D2D1;"></i>
+                        </div>
                     </div>
 
                     <!-- Card body (content) with Vue conditional rendering -->
@@ -85,6 +96,12 @@
                                 <input type="checkbox" /> Paid
                             </label>
                         </div>
+                        <hr style="margin: 10px 1rem; opacity: .050;" />
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" /> Premium
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -93,54 +110,82 @@
                     <!-- Card header with toggle button -->
                     <div class="card-header" @click="toggleCardCategory">
                         <h5 class="mb-0">Categories</h5>
+                        <div>
+                            <i :class="{ 'fa-regular fa-circle-up fa-lg': isExpandedCategory, 'fa-regular fa-circle-down fa-lg': !isExpandedCategory }"
+                                style="color: #C8D2D1;"></i>
+                        </div>
                     </div>
 
                     <!-- Card body (content) with Vue conditional rendering -->
-                    <div class="card-body" v-if="isExpandedCategory">
+                    <div class="card-body card-filters" v-if="isExpandedCategory">
                         <!-- Placeholder for checkbox filters -->
-                        <div class="category-container" v-for="category in categories" :key="category.ai_use_case_id">
+                        <div class="category-container" v-for="category in allCategories" :key="category">
                             <div class="form-group">
                                 <label class="checkbox">
-                                    <input type="checkbox" v-model="selectedCategories" :value="category.ai_use_case_id"
-                                        @change="filterData" />
-                                    {{ category.ai_use_case_category }}
+                                    <input class="form-check-input" type="checkbox" v-model="selectedCategories"
+                                        :value="category" @change="filterData" />
+                                    {{ getCategoryName(category) }}
                                 </label>
+                                <div class="form-text">
+                                    ({{ categoryCounts[category] }})
+                                </div>
                             </div>
-                            <hr style="margin: 10px 1rem; opacity: .050;" />
+                            <hr style="margin: 10px 0rem; opacity: .050;" />
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Right Column -->
-            <div class="col-md-9 ai-tool-details-container">
+            <div class="col-md-10 ai-tool-details-container">
                 <div class="row">
                     <h2 class="mb-5">About {{ tool_name }}</h2>
                     <!-- Right Column Cards -->
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header" id="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <h3 class="card-title">{{ tool_name }}</h3>
+                                    <div style="display: flex;">
+                                        <div class="tool-pricing-icon">
+                                            <i class="fa-solid fa-dollar-sign fa-xl pricing-icon"
+                                                style="color: #ffffff;"></i>
+                                        </div>
+                                        <h3 class="card-title">{{ tool_name }}</h3>
+                                        <tool-star-rating class="star-rating" :selected-star="`${star_rating}`"
+                                            style="margin-left: 1rem;"></tool-star-rating>
+                                    </div>
                                     <span class="badge badge-pill badge-dark" v-for="columnData in getColumnDataArray()"
                                         :key="columnData">
                                         {{ columnData }}
                                     </span>
                                 </div>
-                                <div class="col" style="display: flex;
+                                <div class="col" style="
+                                display: flex;
                                 flex-direction: column;
-                                align-items: flex-end;">
-                                    <tool-rank-count-display></tool-rank-count-display>
+                                align-items: flex-end;
+                                justify-content: space-evenly;
+                                    ">
+                                    <tool-rank-count-display
+                                        :overall-rating="`${overall_rating}`"></tool-rank-count-display>
                                     <div class="date">
-                                        <i class="fa-regular fa-calendar"></i>&nbsp;<span>MM/DD/YYYY</span>
+                                        <i class="fa-regular fa-calendar" style="color: #C8D2D1;"></i>&nbsp;<span
+                                            style="color: #C8D2D1;">{{ extractDate(tool_date) ? formattedDate :
+                                                formattedDate }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" id="card-body">
                             <slot>
-                                <img src="../assets/imgs/placeholder.jpg" />
+                                <template v-if="file_name">
+                                    <img class="tool-image" :src="getImageUrl(file_name)" :alt="file_name" />
+                                </template>
+                                <template v-else>
+                                    <!-- Render a placeholder or loading state until the file_name is available -->
+                                    <p>loading...</p>
+                                </template>
                             </slot>
+                            <tool-details-on-hover :url="tool_url"></tool-details-on-hover>
                         </div>
                     </div>
                 </div>
@@ -148,8 +193,8 @@
                 <!-- Right Column Lower Container -->
                 <div class="container-fluid row lower-container-details mt-5">
                     <!-- Left column -->
-                    <div class="col-md-9">
-                        <section>
+                    <div class="col-md-9 left-container">
+                        <section class="tool-information">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi hendrerit faucibus suscipit.
                             <br><br>Key Features:
                             <br>
@@ -169,12 +214,29 @@
                                     In a erat rutrum sapien pretium volutpat.</li>
                             </ul>
                             <br>
-                            Social Media: <span><i class="fa-brands fa-square-facebook fa-xl"></i></span><span><i
-                                    class="fa-brands fa-square-instagram fa-xl"></i></span><span><i
-                                    class="fa-brands fa-square-twitter fa-xl"></i></span>
+                            Social Media: <span><i class="fa-brands fa-square-facebook fa-2xl"></i></span><span><i
+                                    class="fa-brands fa-square-instagram fa-2xl"></i></span><span><i
+                                    class="fa-brands fa-square-twitter fa-2xl"></i></span>
                         </section>
 
                         <form action="" class="container-fluid submit-review-container">
+                            <div class="form-header">
+                                <div class="title">
+                                    <label for="">
+                                        <h2>Would you recommend {{ tool_name }}?</h2>
+                                    </label>
+                                    <small id="passwordHelpInline" class="text-muted">
+                                        Share your experience with the community.
+                                    </small>
+                                </div>
+                                <div class="">
+                                    <star-rating></star-rating>
+                                    <button type="button" class="btn btn-light" id="review-button">Leave a Review</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- <form action="" class="container-fluid submit-review-container">
                             <div class="form-header">
                                 <div class="title">
                                     <label for="">
@@ -194,13 +256,14 @@
                                 <button type="button" class="btn btn-light">Cancel</button>
                                 <button type="button" class="btn btn-primary">Post</button>
                             </div>
-                        </form>
+                        </form> -->
 
                         <div class="tool-reviews">
                             <div class="container review-container">
                                 <div class="container header-review">
-                                    <label for="">User 1</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <tool-star-rating></tool-star-rating>
+                                    <label for="">User 1</label><span>&nbsp;<small
+                                            class="text-muted">MM/DD/YYYY</small></span>
+                                    <star-rating></star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -212,8 +275,9 @@
                             <hr style="margin: auto; opacity: .1;" />
                             <div class="container review-container">
                                 <div class="container header-review">
-                                    <label for="">User 2</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <tool-star-rating></tool-star-rating>
+                                    <label for="">User 2</label><span>&nbsp;<small
+                                            class="text-muted">MM/DD/YYYY</small></span>
+                                    <star-rating></star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -225,8 +289,9 @@
                             <hr style="margin: auto; opacity: .1;" />
                             <div class="container review-container">
                                 <div class="container header-review">
-                                    <label for="">User 3</label><span><small class="text-muted">MM/DD/YYYY</small></span>
-                                    <tool-star-rating></tool-star-rating>
+                                    <label for="">User 3</label><span>&nbsp;<small
+                                            class="text-muted">MM/DD/YYYY</small></span>
+                                    <star-rating></star-rating>
                                 </div>
                                 <div class="review">
                                     <small id="passwordHelpInline" class="text-muted">
@@ -244,16 +309,16 @@
                         <div class="container-fluid rating-container">
                             <div class="rating-details">
                                 <h5>Overall Rating</h5>
-                                <div class="rating-number">5</div>
-                                <tool-star-rating></tool-star-rating>
-                                <small>Based on 1 review</small>
+                                <div class="rating-number">{{ star_rating }}</div>
+                                <tool-star-rating class="star-rating" :selected-star="`${star_rating}`"></tool-star-rating>
+                                <small>Based on _ review</small>
                             </div>
 
                             <div class="progress-container">
                                 <div class="progress">
                                     <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        5 star
+                                        {{ star_rating }} star
                                     </div>
                                 </div>
                                 <div class="progress">
@@ -279,21 +344,7 @@
                             </div>
                         </div>
                         <div class="container-fluid card trending-tools-ol">
-                            <div class="card-body">
-                                <h5 class="card-title">Trending Tools</h5>
-                                <ol>
-                                    <li class="trending-item">Tool #1</li>
-                                    <li class="trending-item">Tool #2</li>
-                                    <li class="trending-item">Tool #3</li>
-                                    <li class="trending-item">Tool #4</li>
-                                    <li class="trending-item">Tool #5</li>
-                                    <li class="trending-item">Tool #6</li>
-                                    <li class="trending-item">Tool #7</li>
-                                    <li class="trending-item">Tool #8</li>
-                                    <li class="trending-item">Tool #9</li>
-                                    <li class="trending-item">Tool #10</li>
-                                </ol>
-                            </div>
+                            <trending-tools-list :cards="toolsData"></trending-tools-list>
                         </div>
                     </div>
                 </div>
@@ -301,41 +352,54 @@
         </div>
     </div>
 
-    <div class="related-tools-container">
+    <!-- <div class="related-tools-container">
         <h4>Related Tools</h4>
         <trending-tools class="related-tools"></trending-tools>
-    </div>
+    </div> -->
 </template>
 <!-- eslint-disable prettier/prettier -->
 <script>
 import axios from 'axios';
-import TrendingTools from "./TrendingTools.vue";
+// import TrendingTools from "./TrendingTools.vue";
+import TrendingToolsList from "./TrendingToolsList.vue";
 import ToolRankCountDisplay from "./ToolRankCountDisplay.vue";
 import ToolStarRating from "./ToolStarRating.vue";
+import StarRating from "./StarRating.vue";
+import ToolDetailsOnHover from './ToolDetailsOnHover.vue';
 
 export default {
     name: "ToolDetails",
     components: {
-        TrendingTools,
+        // TrendingTools,
+        TrendingToolsList,
         ToolRankCountDisplay,
         ToolStarRating,
+        StarRating,
+        ToolDetailsOnHover,
     },
     data() {
         return {
             categories: [],
             categoryBadge: [],
             columnDataArray: [],
+            toolsData: [],
             isExpandedSortBy: false,
             isExpandedPricing: false,
             isExpandedCategory: false,
             tool_name: null,
             tool_description: null,
             tool_url: null,
+            tool_date: null,
+            overall_rating: null,
+            file_name: null,
+            star_rating: null,
+            formattedDate: "",
             card: null,
         };
     },
     mounted() {
         this.fetchCategories();
+        this.extractDate();
         // Fetch card details based on the ID from the API or another data source
         let cardId = this.$route.params.tool_id;
         this.card = this.getCardDetails(cardId);
@@ -349,10 +413,14 @@ export default {
                     this.card = responseData[0];
                     const values = this.card;
                     this.categoryBadge = values.use_case_id;
-                    // console.log(this.card, values.use_case_id);
                     this.tool_name = responseData[0].tool_name;
                     this.tool_description = responseData[0].tool_description;
+                    this.tool_date = responseData[0].date_added;
                     this.tool_url = responseData[0].tool_url;
+                    this.overall_rating = responseData[0].sum_likes_rating;
+                    this.file_name = responseData[0].screenshot_file_path;
+                    // console.log(this.file_name);
+                    this.star_rating = responseData[0].star_rating;
                 })
                 .catch(error => {
                     console.error('Error fetching card details:', error);
@@ -386,23 +454,38 @@ export default {
         getColumnDataArray() {
             const proxyArray = this.categories;
             const standardArray = Array.from(proxyArray).map(proxy => Object.assign({}, proxy));
-            console.log(this.categoryBadge);
             return this.columnDataArray = this.categoryBadge.map(number => {
                 const matchedItem = standardArray.find(item => item.ai_use_case_id === number);
-                console.log(matchedItem);
                 return matchedItem ? matchedItem.ai_use_case_category : null;
             });
-        }
+        },
+        extractDate(dateFormat) {
+            const date = new Date(dateFormat);
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            this.formattedDate = `${day}/${month}/${year}`;
+        },
+        getImageUrl(filePath) {
+            console.log(filePath);
+            return require("@/assets/imgs/webpage_ss/" + filePath);
+        },
     },
 };
 </script>
 <!-- eslint-disable prettier/prettier -->
 <style scoped>
 #header-section {
+    background: rgb(200, 210, 209);
+    background: linear-gradient(180deg, rgba(200, 210, 209, 1) 0%, rgba(200, 210, 209, 1) 20%, rgba(200, 210, 209, 0) 100%);
     padding: 4rem auto 4rem auto;
 
     .row {
         padding: 6rem;
+
+        .search-input {
+            margin-top: 3.5rem;
+        }
     }
 
     .section-contents {
@@ -418,21 +501,21 @@ export default {
 
     .header-search-bar {
         .form-control {
+            background-color: #FFFFFF;
             z-index: 0;
             padding: 12px;
-            border-radius: 8px;
-            background-color: transparent;
+            border-radius: 26px;
             border-color: transparent;
-            color: inherit;
-            border: 1px solid #adb5bd;
+            color: #A2A6A5;
+            border: 1px solid #14471E;
         }
 
         .btn {
             position: absolute;
             z-index: 1;
             top: 6px;
-            width: 175px;
-            right: 8px;
+            width: 55px;
+            right: 4px;
             border-radius: 8px;
         }
     }
@@ -444,37 +527,101 @@ export default {
 
 #checkbox-filters-container {
     margin-top: 86px;
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
+        margin-bottom: 0;
+        background-color: transparent;
+        border-bottom: none;
+    }
+
+    .card-filters {
+        .form-group {
+            display: flex;
+
+            .form-text {
+                margin-left: 5px;
+            }
+        }
+    }
+}
+
+#filter-and-tools-section {
+    padding: 2rem;
+    background: rgb(200, 210, 209);
+    background: linear-gradient(0deg, rgba(200, 210, 209, 1) 0%, rgba(200, 210, 209, 1) 5%, rgba(200, 210, 209, 0) 20%);
 }
 
 .ai-tool-details-container {
+    padding-left: 2rem;
+
     .card {
         padding: 0px;
         width: 95%;
         height: 60vh;
+        border-radius: 10px;
+        overflow-y: hidden;
+        overflow: hidden;
+        position: relative;
 
-        .badge-dark {
-            color: #fff;
-            background-color: #343a40;
+        #card-header {
+            margin-left: 2rem;
+            padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
+            margin-bottom: 0;
+            color: var(--bs-card-cap-color);
+            background-color: #FFF;
+            border-bottom: none;
+            border-radius: 10px 10px 0px 0px;
+
+            .tool-pricing-icon {
+                background: linear-gradient(169deg, rgba(238, 155, 1, 1) 0%, rgba(238, 155, 1, 0.8995973389355743) 35%, rgba(238, 155, 1, 0.25253851540616246) 100%);
+                position: absolute;
+                left: 0;
+                top: 12px;
+                width: 2.3rem;
+                height: 4rem;
+                border-radius: 0px 8px 8px 0px;
+            }
+
+            .pricing-icon {
+                margin: 11px;
+                padding-top: 9px;
+            }
+        }
+
+        #card-body {
+            border-radius: 0px 0px 10px 10px;
+            padding: 0px;
+            height: 0;
+            /* Set initial height to 0 to allow the aspect ratio to be preserved */
+            padding-bottom: 10%;
+            /* Set the desired aspect ratio (e.g., 4:3 = 75%) */
+            position: relative;
+            overflow: hidden;
+
+            .tool-image {
+                border: 1px solid #D9D9D9;
+                border-radius: 0px 0px 10px 10px;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 25px 0px inset;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50.6vh;
+                object-fit: cover;
+                overflow: hidden;
+                /* Ensure the image covers the entire wrapper */
+            }
         }
 
         .badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.25rem;
+            border: 1px solid #D9D9D9;
             padding: 6px 12px;
-            margin: 5px;
-        }
-
-        .badge-pill {
-            padding-right: 0.6em;
-            padding-left: 0.6em;
-            border-radius: 5px;
+            border-radius: 14px;
+            margin: 2px;
+            color: #838383;
         }
     }
 
@@ -485,23 +632,50 @@ export default {
 
     .lower-container-details {
 
+        .left-container {
+            .tool-information>span {
+                color: #98A2B3;
+                margin-right: 1rem;
+
+                :first-child {
+                    margin-left: 1rem;
+                }
+            }
+
+
+            #review-button {
+                margin: 0px 5px;
+                padding: 5px 1.5rem;
+                background: linear-gradient(169deg, rgba(238, 155, 1, 1) 0%, rgba(238, 155, 1, 0.8995973389355743) 35%, rgba(238, 155, 1, 0.25253851540616246) 100%);
+                color: #FFFFFF;
+                font-weight: 500;
+                border-radius: 8px;
+            }
+        }
+
         .submit-review-container {
             margin: 5rem 0px;
-            background-color: #D0D5DD;
+            background-color: #F5F5F5;
             padding: 25px;
             width: 96%;
             border-radius: 10px;
 
             .form-header {
                 display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
+                justify-content: space-around;
                 flex-direction: row;
+                align-items: center;
 
                 .title {
                     display: flex;
                     flex-direction: column;
                     align-items: flex-start;
+                }
+
+                >div {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
                 }
             }
 
@@ -535,6 +709,8 @@ export default {
 
             .btn {
                 margin: 4rem 38% 4rem 38%;
+                padding: 0.6rem 3rem;
+                font-size: 15px;
             }
         }
 
@@ -568,10 +744,6 @@ export default {
                 margin-bottom: 1rem;
             }
 
-            .trending-item {
-                margin-bottom: 10px;
-            }
-
         }
     }
 }
@@ -584,4 +756,5 @@ export default {
     .related-tools {
         margin: 0px 0px 4rem 0px;
     }
-}</style>
+}
+</style>
